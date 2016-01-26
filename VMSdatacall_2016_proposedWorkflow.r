@@ -475,7 +475,7 @@ for(year in ac(2009:2015)){
 
   eflalo$Year             <- year(eflalo$FT_LDATIM)
   eflalo$Month            <- month(eflalo$FT_LDATIM)
-  eflalo$INTV             <- 24 #24 hours a day
+  eflalo$INTV             <- 1 #1 day
   eflalo$dummy            <- 1
   res                     <- aggregate(eflalo$dummy,by=as.list(eflalo[,c("VE_COU","VE_REF","LE_CDAT")]),FUN=sum,na.rm=T)
   colnames(res)           <- c("VE_COU","VE_REF","LE_CDAT","nrRecords")
