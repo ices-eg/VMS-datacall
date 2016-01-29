@@ -284,6 +284,8 @@ for(year in ac(2009:2015)){
   tacsatp$LE_WIDTH  <- eflalo$LE_WIDTH[match(tacsatp$FT_REF,eflalo$FT_REF)]
   tacsatp$VE_FLT    <- eflalo$VE_FLT[  match(tacsatp$FT_REF,eflalo$FT_REF)]
   tacsatp$LE_CDAT   <- eflalo$LE_CDAT[ match(tacsatp$FT_REF,eflalo$FT_REF)]
+  tacsatp$VE_COU    <- eflalo$VE_COU[ match(tacsatp$FT_REF,eflalo$FT_REF)]
+
 
   #-------------------------------------------------------------------------------
   #- Save not merged tacsat data
