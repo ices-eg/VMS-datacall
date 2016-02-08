@@ -53,6 +53,10 @@ ospar         <- readShapePoly(file.path(polPath,"ospar_regions_without_coastlin
   data(ICESareas)
   data(europa)
 
+  #-------------------------------------------------------------------------------
+  #- 1b) Looping through the data years
+  #-------------------------------------------------------------------------------
+
 for(year in ac(2009:2015)){
   print(year)
   #-------------------------------------------------------------------------------
@@ -421,7 +425,7 @@ for(year in ac(2009:2015)){
 
   print("Defining activity completed")
 #-------------------------------------------------------------------------------
-#- 7) Dispatch landings of merged eflalo at the ping scale
+#- 6) Dispatch landings of merged eflalo at the ping scale
 #-------------------------------------------------------------------------------
   idxkgeur          <- kgeur(colnames(eflalo))
   eflalo$LE_KG_TOT  <- rowSums(eflalo[,grep("LE_KG_",colnames(eflalo))],na.rm=T)
@@ -439,7 +443,7 @@ for(year in ac(2009:2015)){
   print("Dispatching landings completed")
 
 #-------------------------------------------------------------------------------
-#- 8) Assign c-square, year, month, quarter, area and create table 1
+#- 7) Assign c-square, year, month, quarter, area and create table 1
 #-------------------------------------------------------------------------------
 
   tacsatEflalo$Csquare  <- CSquare(tacsatEflalo$SI_LONG,tacsatEflalo$SI_LATI,degrees=0.05)
@@ -472,7 +476,7 @@ for(year in ac(2009:2015)){
   
 
 #-------------------------------------------------------------------------------
-#- 9) Assign  year, month, quarter, area and create table 2
+#- 8) Assign  year, month, quarter, area and create table 2
 #-------------------------------------------------------------------------------
 
   eflalo$Year             <- year(eflalo$FT_LDATIM)
