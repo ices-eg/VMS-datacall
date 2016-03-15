@@ -173,6 +173,12 @@ for(year in ac(2009:2015)){
   #- Warn for outlying catch records
   #-------------------------------------------------------------------------------
 
+  # Put eflalo in order of 'non kg/eur' columns, then kg columns, then eur columns
+  idxkg           <- grep("LE_KG_",colnames(eflalo))
+  idxeur          <- grep("LE_EURO_",colnames(eflalo))
+  idxoth          <- which(!(1:ncol(eflalo)) %in% c(idxkg,idxeur))
+  eflalo          <- eflalo[,c(idxoth,idxkg,idxeur)]
+
   #First get the species names in your eflalo dataset
   specs           <- substr(colnames(eflalo[grep("KG",colnames(eflalo))]),7,9)
 
@@ -502,7 +508,7 @@ for(year in ac(2009:2015)){
     table2                <- cbind(RT=RecordType,eflalo[,c("VE_COU","Year","Month","LE_RECT","LE_GEAR","LE_MET","LENGTHCAT","tripInTacsat","INTV","kwDays","LE_KG_TOT","LE_EURO_TOT")])
   } else {
       table2              <- rbind(table2,
-                                   cbind(RT=RecordType,c("VE_COU","Year","Month","LE_RECT","LE_GEAR","LE_MET","LENGTHCAT","tripInTacsat","INTV","kwDays","LE_KG_TOT","LE_EURO_TOT")))
+                                   cbind(RT=RecordType,eflalo[,c("VE_COU","Year","Month","LE_RECT","LE_GEAR","LE_MET","LENGTHCAT","tripInTacsat","INTV","kwDays","LE_KG_TOT","LE_EURO_TOT")]))
     }
   table2Save              <- aggregate(table2[,c("INTV","kwDays","LE_KG_TOT","LE_EURO_TOT")],
                                        by=as.list(table2[,c("RT","VE_COU","Year","Month","LE_RECT","LE_GEAR","LE_MET","LENGTHCAT","tripInTacsat")]),
