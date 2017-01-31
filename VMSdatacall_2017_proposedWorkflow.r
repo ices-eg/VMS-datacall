@@ -43,7 +43,7 @@ helcom        <- readShapePoly(file.path(polPath,"helcom_subbasins"))
 ospar         <- readShapePoly(file.path(polPath,"ospar_regions_without_coastline"))
 
 #- Re-run all years or only update 2016
-yearsToSubmit <- ac(sort(2009:2016))
+yearsToSubmit <- sort(2009:2016)
 
 #- Set the gear names for which automatic fishing activity is wanted
 #  It is important to fill out the gears you want to apply auto detection for
@@ -52,6 +52,16 @@ autoDetectionGears        <- c("TBB","OTB","OTT","SSC","SDN","DRB","PTB","HMD")
 #- Decide if you want to visualy analyse speed-histograms to identify fishing activity
 #  peaks or have prior knowledge and use the template provided around lines 380 below
 visualInspection          <- FALSE
+
+#- Specify how landings should be distributed over the VMS pings: By day, ICES rectangle, trip basis or otherwise
+linkEflaloTacsat          <- c("day","ICESrectangle","trip")
+# other options
+# linkEflaloTacsat          <- c("day","ICESrectangle","trip")
+# linkEflaloTacsat          <- c("ICESrectangle","trip")
+# linkEflaloTacsat          <- c("day","trip")
+# linkEflaloTacsat          <- c("trip")
+
+
 #-------------------------------------------------------------------------------
 #- 1) Load the data
 #-------------------------------------------------------------------------------
@@ -457,7 +467,28 @@ for(year in yearsToSubmit){
   tacsatp$SI_STATE[which(tacsatp$SI_STATE != "f")] <- 0
   tacsatp$SI_STATE[which(tacsatp$SI_STATE == "f")] <- 1
 
-  tacsatEflalo  <- splitAmongPings(tacsat=tacsatp,eflalo=eflaloM,variable="all",level="day",conserve=T)
+  #- There are several options, specify at the top of this script what type of linking you require
+  if(!"trip" %in% linkTacsatEflalo) stop("trip must be in linkTacsatEflalo")
+  if(all(c("day","ICESrectangle","trip") %in% linkEflaloTacsat)){
+    tacsatEflalo  <- splitAmongPings(tacsat=tacsatp,eflalo=eflaloM,variable="all",level="day",conserve=T)
+  } else {
+    if(all(c("day","trip") %in% linkEflaloTacsat) & !"ICESrectangle" %in% linkEflaloTacsat){
+      tmpTa       <- tacsatp
+      tmpEf       <- eflaloM
+      tmpTa$LE_RECT <- "ALL"
+      tmpEf$LE_RECT <- "ALL"
+      tacsatEflalo  <- splitAmongPings(tacsat=tmpTa,eflalo=tmpEf,variable="all",level="day",conserve=T)
+    } else {
+      if(all(c("ICESrectangle","trip") %in% linkEflaloTacsat) & !"day" %in% linkEflaloTacsat){
+        tacsatEflalo  <- splitAmongPings(tacsat=tacsatp,eflalo=eflaloM,variable="all",level="ICESrectangle",conserve=T)
+      } else {
+        if(linkEflaloTacsat == "trip" & length(linkEflaloTacsat)==1){
+          tacsatEflalo  <- splitAmongPings(tacsat=tacsatp,eflalo=eflaloM,variable="all",level="trip",conserve=T)
+        }
+      }
+    }
+  }
+
   save(tacsatEflalo,file=paste(outPath,"tacsatEflalo",year,".RData",sep=""))
 
   print("Dispatching landings completed")
